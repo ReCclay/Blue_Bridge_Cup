@@ -1,0 +1,150 @@
+C51 COMPILER V9.02   MAIN                                                                  02/28/2018 22:29:36 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\output\main.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\main.c COMPACT BROWSE DEBUG OBJECTEXTEND PRINT(..\output\main.ls
+                    -t) OBJECT(..\output\main.obj)
+
+line level    source
+
+   1          /*
+   2          *******************************************************************************
+   3          * 文件名：main.c
+   4          * 描  述：
+   5          * 作  者：CLAY
+   6          * 版本号：v1.0.0
+   7          * 日  期: 
+   8          * 备  注：      132
+   9          *         
+  10          *******************************************************************************
+  11          */
+  12          
+  13          #include "config.h"
+  14          #include "ds1302.h"
+  15          #include "lcd1602.h"
+  16          
+  17          u8 T0RH = 0;
+  18          u8 T0RL = 0;
+  19          bit flag200ms = 0;
+  20          
+  21          void ConfigTimer0(u16 ms);
+  22          void CloseFucker();
+  23          
+  24          void main()
+  25          {
+  26   1              u8 i;
+  27   1              u8 psec = 0xAA;
+  28   1              u8 time[8];
+  29   1              u8 str[12];
+  30   1      
+  31   1              
+  32   1              EA = 1;
+  33   1              CloseFucker();
+  34   1              ConfigTimer0(1);
+  35   1              InitDS1302();
+  36   1              InitLcd1602();
+  37   1              
+  38   1      
+  39   1              while(1)
+  40   1              {
+  41   2                      if(flag200ms)
+  42   2                      {
+  43   3                              flag200ms = 0;
+  44   3                              for(i=0; i<7; i++)
+  45   3                              {
+  46   4                                      time[i] = DS1302SingleRead(i);
+  47   4                              }
+  48   3                              if(psec != time[0])
+  49   3                              {
+  50   4                                  str[0] = '2';  //添加年份的高2位：20
+  51   4                      str[1] = '0';
+  52   4                      str[2] = (time[6] >> 4) + '0';  //“年”高位数字转换为ASCII码
+  53   4                      str[3] = (time[6]&0x0F) + '0';  //“年”低位数字转换为ASCII码
+  54   4                      str[4] = '-';  //添加日期分隔符
+C51 COMPILER V9.02   MAIN                                                                  02/28/2018 22:29:36 PAGE 2   
+
+  55   4                      str[5] = (time[4] >> 4) + '0';  //“月”
+  56   4                      str[6] = (time[4]&0x0F) + '0';
+  57   4                      str[7] = '-';
+  58   4                      str[8] = (time[3] >> 4) + '0';  //“日”
+  59   4                      str[9] = (time[3]&0x0F) + '0';
+  60   4                      str[10] = '\0';
+  61   4                      LcdShowStr(0, 0, str);  //显示到液晶的第一行
+  62   4                      
+  63   4                      str[0] = (time[5]&0x0F) + '0';  //“星期”
+  64   4                      str[1] = '\0';
+  65   4                      LcdShowStr(11, 0, "week");
+  66   4                      LcdShowStr(15, 0, str);  //显示到液晶的第一行
+  67   4                      
+  68   4                      str[0] = (time[2] >> 4) + '0';  //“时”
+  69   4                      str[1] = (time[2]&0x0F) + '0';
+  70   4                      str[2] = ':';  //添加时间分隔符
+  71   4                      str[3] = (time[1] >> 4) + '0';  //“分”
+  72   4                      str[4] = (time[1]&0x0F) + '0';
+  73   4                      str[5] = ':';
+  74   4                      str[6] = (time[0] >> 4) + '0';  //“秒”
+  75   4                      str[7] = (time[0]&0x0F) + '0';
+  76   4                      str[8] = '\0';
+  77   4                      LcdShowStr(4, 1, str);  //显示到液晶的第二行
+  78   4                      
+  79   4                      psec = time[0];  //用当前值更新上次秒数
+  80   4                              }
+  81   3                      }               
+  82   2              }
+  83   1      }
+  84          
+  85          void CloseFucker()
+  86          {
+  87   1              P2 = (P2 & 0x1F) | 0xA0;
+  88   1              P0 = P0 & 0xAF;
+  89   1              P2 = P2&0x1F;
+  90   1      }
+  91          
+  92          
+  93          void ConfigTimer0(u16 ms)
+  94          {
+  95   1          u32 tmp; 
+  96   1          
+  97   1          tmp = 11059200 / 12;    
+  98   1          tmp = (tmp * ms) / 1000;  
+  99   1          tmp = 65536 - tmp;          
+ 100   1          T0RH = (u8)(tmp>>8);  
+ 101   1          T0RL = (u8)tmp;
+ 102   1          TMOD &= 0xF0;   
+ 103   1          TMOD |= 0x01;   
+ 104   1          TH0 = T0RH;     
+ 105   1          TL0 = T0RL;
+ 106   1          ET0 = 1;       
+ 107   1          TR0 = 1;       
+ 108   1      }
+ 109          
+ 110          void InterruptTimer0() interrupt 1
+ 111          {
+ 112   1          static unsigned char tmr200ms = 0;
+ 113   1          
+ 114   1          TH0 = T0RH; 
+ 115   1          TL0 = T0RL;
+ 116   1          tmr200ms++;
+C51 COMPILER V9.02   MAIN                                                                  02/28/2018 22:29:36 PAGE 3   
+
+ 117   1          if (tmr200ms >= 200) 
+ 118   1          {
+ 119   2              tmr200ms = 0;
+ 120   2              flag200ms = 1;
+ 121   2          }
+ 122   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    473    ----
+   CONSTANT SIZE    =      5    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =      3      26
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -145,44 +145,24 @@ u8 IncBcd(u8 bcd, u8 i)
 {
 	if(i == 1)//0~23
 	{
-		if(bcd < 0x09)
-		 	bcd += 0x01;
-		else if(bcd == 0x09)
-		 	bcd = 0x10;
-		else if(bcd < 0x19)
-		 	bcd += 0x01;
-		else if(bcd == 0x19)
-			bcd = 0x20;
-		else if(bcd < 0x23)
-		 	bcd += 0x01;	 	
-		else 
-		 	bcd = 0x00;
+		bcd += 0x01;
+		if((bcd&0x0F) == 0x0A)
+		{
+			bcd &= 0xF0;
+		 	bcd += 0x10;
+		}
+		if(bcd == 0x24)
+			bcd = 0x00;
 	}
 	else//0~59
 	{
-	 	if(bcd < 0x09)
-			bcd += 0x01;
-		else if(bcd == 0x09)
-			bcd = 0x10;
-		else if(bcd < 0x19)
-			bcd += 0x01;
-		else if(bcd == 0x19)
-			bcd = 0x20;
-		else if(bcd < 29)
-			bcd += 0x01;
-		else if(bcd == 0x29)
-			bcd = 0x30;
-		else if(bcd < 39)
-			bcd += 0x01;
-		else if(bcd == 0x39)
-			bcd =0x40;
-		else if(bcd < 0x49)
-			bcd += 0x01;
-		else if(bcd == 0x49)
-			bcd = 0x50;
-		else if(bcd < 0x59)
-			bcd+= 0x01;
-		else
+		bcd += 0x01;
+		if((bcd&0x0F) == 0x0A)
+		{
+			bcd &= 0xF0;
+		 	bcd += 0x10;
+		}
+		if(bcd == 0x60)
 			bcd = 0x00;
 	} 
 
@@ -192,44 +172,24 @@ u8 DecBcd(u8 bcd, u8 i)
 {
 	if(i == 1)//0~23
 	{
-		if(bcd > 0x20)
-			bcd -= 0x01;
-		else if(bcd == 0x20)
-			bcd = 0x19;
-		else if(bcd > 0x10)
-			bcd -= 0x01;
-		else if(bcd == 0x10)
-			bcd = 0x09;
-		else if(bcd > 0x00)
-			bcd -= 0x01;
-		else 
-			bcd = 0x23;
+		bcd -= 0x01;
+		if((bcd&0x0F) == 0x0F)
+		{
+		 	bcd = (bcd&0xF0)|0x09;
+		}
+		if(bcd == 0xF9)
+		{
+		 	bcd = 0x23;
+		}
 	}
 	else//0~59
 	{
-		if(bcd > 0x50)
-			bcd -= 0x01;
-		else if(bcd == 0x50)
-			bcd = 0x49;
-		else if(bcd > 0x40)
-			bcd -= 0x01;
-		else if(bcd == 0x40)
-			bcd = 0x39;
-		else if(bcd > 0x30)
-			bcd -= 0x01;
-		else if(bcd == 0x30)
-			bcd = 0x29;
-		else if(bcd > 0x20)
-			bcd -= 0x01;
-		else if(bcd == 0x20)
-			bcd = 0x19;
-		else if(bcd > 0x10)
-			bcd -= 0x01;
-		else if(bcd == 0x10)
-			bcd = 0x09;
-		else if(bcd > 0x00)
-			bcd -= 0x01;
-		else 
+		bcd -= 0x01;
+		if((bcd&0x0F) == 0x0F)
+		{
+		 	bcd = (bcd&0xF0)|0x09;
+		}
+		if(bcd == 0xF9)
 			bcd = 0x59;
 	} 
 

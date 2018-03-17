@@ -357,14 +357,19 @@
               <FilePath>..\source\ds1302.c</FilePath>
             </File>
             <File>
-              <FileName>lcd1602.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source\lcd1602.c</FilePath>
-            </File>
-            <File>
               <FileName>keyboard.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source\keyboard.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -387,14 +392,19 @@
               <FilePath>..\source\ds1302.h</FilePath>
             </File>
             <File>
-              <FileName>lcd1602.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source\lcd1602.h</FilePath>
-            </File>
-            <File>
               <FileName>keyboard.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source\keyboard.h</FilePath>
+            </File>
+            <File>
+              <FileName>led.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source\led.h</FilePath>
+            </File>
+            <File>
+              <FileName>time.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source\time.h</FilePath>
             </File>
           </Files>
         </Group>

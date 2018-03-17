@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* 文件名：ds1302.h
+* 文件名：time.h
 * 描  述：
 * 作  者：CLAY
 * 版本号：v1.0.0
@@ -10,14 +10,12 @@
 *******************************************************************************
 */
 
-#ifndef DS1302_H
-#define DS1302_H
+#ifndef TIME_H
+#define TIME_H
 
-u8 DS1302SingleRead(u8 reg);
-void  DS1302SingleWrite(u8 reg, u8 dat);
-void InitDS1302();
-void DS1302BurstWrite(u8 *dat);
-void DS1302BurstRead(u8 *dat);
+extern u8 setIndex;
 
+void KeyAction(u8 keycode);
+void RefreshTime(bit ak);
 
 #endif

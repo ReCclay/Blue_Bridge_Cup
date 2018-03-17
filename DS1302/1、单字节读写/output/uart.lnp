@@ -1,5 +1,4 @@
 "..\output\main.obj",
-"..\output\ds1302.obj",
-"..\output\lcd1602.obj" 
+"..\output\ds1302.obj" 
 TO "..\output\uart" 
 PRINT("..\output\uart.m51") RAMSIZE(256) 

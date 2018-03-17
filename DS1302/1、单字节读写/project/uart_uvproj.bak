@@ -352,19 +352,14 @@
               <FilePath>..\source\main.c</FilePath>
             </File>
             <File>
-              <FileName>i2c.c</FileName>
+              <FileName>ds1302.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\source\i2c.c</FilePath>
+              <FilePath>..\source\ds1302.c</FilePath>
             </File>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>lcd1602.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\source\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>eeprom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source\eeprom.c</FilePath>
+              <FilePath>..\source\lcd1602.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -377,24 +372,19 @@
               <FilePath>..\source\config.h</FilePath>
             </File>
             <File>
-              <FileName>i2c.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source\i2c.h</FilePath>
-            </File>
-            <File>
               <FileName>main.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source\main.h</FilePath>
             </File>
             <File>
-              <FileName>uart.h</FileName>
+              <FileName>ds1302.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\source\uart.h</FilePath>
+              <FilePath>..\source\ds1302.h</FilePath>
             </File>
             <File>
-              <FileName>eeprom.h</FileName>
+              <FileName>lcd1602.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\source\eeprom.h</FilePath>
+              <FilePath>..\source\lcd1602.h</FilePath>
             </File>
           </Files>
         </Group>

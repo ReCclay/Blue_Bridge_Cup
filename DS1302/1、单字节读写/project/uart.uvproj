@@ -356,11 +356,6 @@
               <FileType>1</FileType>
               <FilePath>..\source\ds1302.c</FilePath>
             </File>
-            <File>
-              <FileName>lcd1602.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source\lcd1602.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -380,11 +375,6 @@
               <FileName>ds1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source\ds1302.h</FilePath>
-            </File>
-            <File>
-              <FileName>lcd1602.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source\lcd1602.h</FilePath>
             </File>
           </Files>
         </Group>

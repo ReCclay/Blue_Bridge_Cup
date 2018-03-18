@@ -29,7 +29,6 @@ void CloseFucker();
 
 void main()
 {
-	u16 temp;//光标闪烁暂存当前位的值
 	bit sta = 0; //光标亮灭对应的标志
 
 	EA = 1;
@@ -37,7 +36,6 @@ void main()
 	ConfigTimer0(1);
 	InitDS1302();
 	
-
 	while(1)
 	{
 		KeyDriver();
@@ -60,11 +58,6 @@ void main()
 		 	if(flag1s)//1s的间隔亮灭
 			{
 			 	flag1s = 0;
-				if(flagCursorCnt == 0)//！！！存值当然是只存一次了！
-				{
-					temp = ((u16)LedBuff[setCursorIndex]<<8)+LedBuff[setCursorIndex-1];//暂存当前两位的数码管值
-					flagCursorCnt = 1;//什么时候清0呢？
-				}
 				if(sta == 1)//当前是亮的状态
 				{
 					sta = 0;
@@ -74,8 +67,6 @@ void main()
 				else //当前是灭的状态
 				{
 					sta = 1;
-				 	LedBuff[setCursorIndex] = (u8)(temp>>8);
-					LedBuff[setCursorIndex-1] = (u8)temp;
 					if(staSystem == E_SET_TIME)//！！！这一点需要判断一下当前是什么设置模式是刷新时钟还是闹钟！
 					{
 						RefreshTime(0);

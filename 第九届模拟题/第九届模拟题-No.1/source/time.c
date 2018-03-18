@@ -27,8 +27,6 @@ struct sTime buffTime;//时间缓冲区
 struct sTime setTime;//！！！设置模式下，备份时间的缓冲区
 
 u8 setIndex = 0; //初始化设置索引为0，	0-时钟显示 1-设置'时' 2-设置'分' 3-设置'秒'
-bit flagCursorCnt = 0;
-
 u8 AlarmCnt = 0;//!!!!!!!!!!!!!!!!!!!			  
 
 void AlarmMonitor()
@@ -141,7 +139,52 @@ void Refresh18B20()
 	LedBuff[0] = 0xC6; //对应字符'C'
 }
 
-u8 IncBcd(u8 bcd, u8 i)
+//u8 IncBcd(u8 bcd, u8 i) //第一种写法
+//{
+//	if(i == 1)//0~23
+//	{
+//		if(bcd < 0x09)
+//		 	bcd += 0x01;
+//		else if(bcd == 0x09)
+//		 	bcd = 0x10;
+//		else if(bcd < 0x19)
+//		 	bcd += 0x01;
+//		else if(bcd == 0x19)
+//			bcd = 0x20;
+//		else if(bcd < 0x23)
+//		 	bcd += 0x01;	 	
+//		else 
+//		 	bcd = 0x00;
+//	}
+//	else//0~59
+//	{
+//	 	if(bcd < 0x09)
+//			bcd += 0x01;
+//		else if(bcd == 0x09)
+//			bcd = 0x10;
+//		else if(bcd < 0x19)
+//			bcd += 0x01;
+//		else if(bcd == 0x19)
+//			bcd = 0x20;
+//		else if(bcd < 29)
+//			bcd += 0x01;
+//		else if(bcd == 0x29)
+//			bcd = 0x30;
+//		else if(bcd < 39)
+//			bcd += 0x01;
+//		else if(bcd == 0x39)
+//			bcd =0x40;
+//		else if(bcd < 0x49)
+//			bcd += 0x01;
+//		else if(bcd == 0x49)
+//			bcd = 0x50;
+//		else if(bcd < 0x59)
+//			bcd+= 0x01;
+//		else
+//			bcd = 0x00;
+//	} 
+
+u8 IncBcd(u8 bcd, u8 i)//第二种
 {
 	if(i == 1)//0~23
 	{
@@ -168,6 +211,94 @@ u8 IncBcd(u8 bcd, u8 i)
 
 	return bcd;	
 }
+
+//u8 IncBcd(u8 bcd, bit mode) //第三种
+//{
+// 	if(mode)
+//	{
+//		if(bcd < 0x23)
+//		{
+//			bcd += 0x01;
+//			if((bcd&0x0F) == 0x0A)
+//			{
+//			 	bcd += 0x10;
+//				bcd &= 0xF0;
+//			} 	
+//		}
+//		else
+//		{
+//		 	bcd = 0x00;
+//		}	 	
+//	}
+//	else
+//	{
+//	 	if(bcd < 0x59)
+//		{
+//			bcd += 0x01;
+//			if((bcd&0x0F) == 0x0A)
+//			{
+//			 	bcd += 0x10;
+//				bcd &= 0xF0;
+//			} 
+//		}
+//		else
+//		{
+//		 	bcd = 0x00;
+//		}
+//	}
+//	return bcd;
+//}
+
+//u8 DecBcd(u8 bcd, u8 i)
+//{
+//	if(i == 1)//0~23
+//	{
+//		if(bcd > 0x20)
+//			bcd -= 0x01;
+//		else if(bcd == 0x20)
+//			bcd = 0x19;
+//		else if(bcd > 0x10)
+//			bcd -= 0x01;
+//		else if(bcd == 0x10)
+//			bcd = 0x09;
+//		else if(bcd > 0x00)
+//			bcd -= 0x01;
+//		else 
+//			bcd = 0x23;
+//	}
+//	else//0~59
+//	{
+//		if(bcd > 0x50)
+//			bcd -= 0x01;
+//		else if(bcd == 0x50)
+//			bcd = 0x49;
+//		else if(bcd > 0x40)
+//			bcd -= 0x01;
+//		else if(bcd == 0x40)
+//			bcd = 0x39;
+//		else if(bcd > 0x30)
+//			bcd -= 0x01;
+//		else if(bcd == 0x30)
+//			bcd = 0x29;
+//		else if(bcd > 0x20)
+//			bcd -= 0x01;
+//		else if(bcd == 0x20)
+//			bcd = 0x19;
+//		else if(bcd > 0x10)
+//			bcd -= 0x01;
+//		else if(bcd == 0x10)
+//			bcd = 0x09;
+//		else if(bcd > 0x00)
+//			bcd -= 0x01;
+//		else 
+//			bcd = 0x59;
+//	} 
+//
+//	return bcd;		
+//}
+
+
+
 u8 DecBcd(u8 bcd, u8 i)
 {
 	if(i == 1)//0~23
@@ -195,6 +326,43 @@ u8 DecBcd(u8 bcd, u8 i)
 
 	return bcd;		
 }
+
+//u8 DecBcd(u8 bcd, bit mode) //1-0~23; 0-0~59
+//{
+// 	if(mode)
+//	{
+//		if(bcd > 0x00)
+//		{
+//			bcd -= 0x01;
+//			if((bcd&0x0F) == 0x0F)
+//			{
+//				bcd &= 0xF9;
+//			} 	
+//		}
+//		else
+//		{
+//		 	bcd = 0x23;
+//		}	 	
+//	}
+//	else
+//	{
+//		if(bcd > 0x00)
+//		{
+//			bcd -= 0x01;
+//			if((bcd&0x0F) == 0x0F)
+//			{
+//				bcd &= 0xF9;
+//			} 	
+//		}
+//		else
+//		{
+//		 	bcd = 0x59;
+//		}
+//	}
+//	return bcd;
+//}
+
+
 
 void IncTimeSet()
 {
@@ -249,14 +417,13 @@ void SwitchTimeSet()
  	if(staSystem == E_NORMAL)
 	{
 	 	staSystem = E_SET_TIME;
-		setIndex = 1;//设置索引对应为 - '时'
-		
-		setTime.hour = buffTime.hour;//！！！
-		setTime.min = buffTime.min;//！！！
-		setTime.sec = buffTime.sec;//！！！
+		setIndex = 1;//设置索引对应为 - '时'		
+//		setTime.hour = buffTime.hour;//！！！
+//		setTime.min = buffTime.min;//！！！
+//		setTime.sec = buffTime.sec;//！！！
+		setTime = buffTime;//备份进入设置之前的值
 
 		RefreshSet();
-		flagCursorCnt = 0;
 		LedOpenCursor();
 	}	
 	else if(staSystem == E_SET_TIME)
@@ -290,8 +457,9 @@ void SwitchAlarmSet()
 	 	staSystem = E_SET_ALARM;
 		setIndex = 1;//设置索引对应为 - '时'
 		RefreshSet();
-		flagCursorCnt = 0;
 		LedOpenCursor();
+
+		RefreshAlarm();
 	}	
 	else if(staSystem == E_SET_ALARM)
 	{
@@ -305,7 +473,7 @@ void SwitchAlarmSet()
 		 	setIndex = 0; 
 			staSystem = E_NORMAL;//！！！换到4别忘了回到时钟显示模式！
 			staMute = 0;//!!!6666666666666一次闹钟静音之后，再设置一次即可再定一个闹钟！
-			RefreshTime(1);//闹钟切换到时钟显示模式，直接刷新就行！
+//			RefreshTime(1);//闹钟切换到时钟显示模式，直接刷新就行！没必要加这一句，时钟显示模式主函数会刷新
 			LedCloseCursor();//关闭光标
 		}	
 	}

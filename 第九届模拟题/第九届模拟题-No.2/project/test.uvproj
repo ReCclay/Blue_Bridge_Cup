@@ -43,7 +43,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>..\output\</OutputDirectory>
-          <OutputName>uart</OutputName>
+          <OutputName>test</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -168,7 +168,7 @@
         </Utilities>
         <Target51>
           <Target51Misc>
-            <MemoryModel>1</MemoryModel>
+            <MemoryModel>0</MemoryModel>
             <RTOS>0</RTOS>
             <RomSize>2</RomSize>
             <DataHold>0</DataHold>
@@ -347,9 +347,9 @@
           <GroupName>SourceFiles</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>ds18b20.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\source\main.c</FilePath>
+              <FilePath>..\source\ds18b20.c</FilePath>
             </File>
             <File>
               <FileName>ds1302.c</FileName>
@@ -357,14 +357,14 @@
               <FilePath>..\source\ds1302.c</FilePath>
             </File>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\source\main.c</FilePath>
+            </File>
+            <File>
               <FileName>keyboard.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source\keyboard.c</FilePath>
-            </File>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source\time.c</FilePath>
             </File>
             <File>
               <FileName>led.c</FileName>
@@ -372,24 +372,19 @@
               <FilePath>..\source\led.c</FilePath>
             </File>
             <File>
-              <FileName>ds18b20.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\source\ds18b20.c</FilePath>
+              <FilePath>..\source\time.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>IncludeFIles</GroupName>
+          <GroupName>IncludeFiles</GroupName>
           <Files>
             <File>
-              <FileName>config.h</FileName>
+              <FileName>ds18b20.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\source\config.h</FilePath>
-            </File>
-            <File>
-              <FileName>main.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source\main.h</FilePath>
+              <FilePath>..\source\ds18b20.h</FilePath>
             </File>
             <File>
               <FileName>ds1302.h</FileName>
@@ -397,14 +392,19 @@
               <FilePath>..\source\ds1302.h</FilePath>
             </File>
             <File>
+              <FileName>main.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source\main.h</FilePath>
+            </File>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\source\config.h</FilePath>
+            </File>
+            <File>
               <FileName>keyboard.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\source\keyboard.h</FilePath>
-            </File>
-            <File>
-              <FileName>time.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\source\time.h</FilePath>
             </File>
             <File>
               <FileName>led.h</FileName>
@@ -412,9 +412,9 @@
               <FilePath>..\source\led.h</FilePath>
             </File>
             <File>
-              <FileName>ds18b20.h</FileName>
+              <FileName>time.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\source\ds18b20.h</FilePath>
+              <FilePath>..\source\time.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,0 +1,116 @@
+C51 COMPILER V9.02   MAIN                                                                  03/31/2018 12:10:54 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\output\main.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\main.c COMPACT BROWSE DEBUG OBJECTEXTEND PRINT(..\output\main.ls
+                    -t) OBJECT(..\output\main.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "keyboard.h"
+   3          #include "led.h"
+   4          #include "time.h"
+   5          #include "ds18b20.h"
+   6          #include "ds1302.h"
+   7          #include "eeprom.h"
+   8          #include "pcf8591.h"
+   9          
+  10          
+  11          u8 T0RH, T0RL;
+  12          bit flag200ms = 0;
+  13          
+  14          void CloseFucker();
+  15          void ConfigTimer0(u16 ms);
+  16          
+  17          void main()
+  18          {
+  19   1              u8 val=0;
+  20   1      //      u8 y=29;
+  21   1      //      u8 x=0;
+  22   1      //      u16 i;
+  23   1              
+  24   1              EA = 1;
+  25   1              CloseFucker();
+  26   1              ConfigTimer0(1);
+  27   1              InitDS1302();
+  28   1      
+  29   1      //      E2Write(&y, 0x24, 1);
+  30   1      //      for(i=0; i<3000; i++);
+  31   1      //      E2Read(&x, 0x24, 1);
+  32   1      //      ShowNumber(x);
+  33   1              SetDACOut(48);
+  34   1      
+  35   1              while(1)
+  36   1              {
+  37   2                      KeyDriver();
+  38   2                      
+  39   2                      if(flag200ms)
+  40   2                      {
+  41   3                              flag200ms = 0;
+  42   3      //                      RefreshTemp();
+  43   3      //                      RefreshTime(1);
+  44   3      //                      val = GetADCVal(3);
+  45   3      //                      ShowNumber(val);
+  46   3                      }       
+  47   2              }
+  48   1      }
+  49          
+  50          void CloseFucker()
+  51          {
+  52   1              P2 = (P2&0x1F) | 0xA0;
+  53   1              P0 &= 0xAF;     
+  54   1              P2 = P2&0x1F;
+C51 COMPILER V9.02   MAIN                                                                  03/31/2018 12:10:54 PAGE 2   
+
+  55   1      }
+  56          
+  57          void ConfigTimer0(u16 ms)
+  58          {
+  59   1              u32 tmp;
+  60   1      
+  61   1              tmp = 11059200/12;
+  62   1              tmp = (tmp*ms) / 1000;
+  63   1              tmp = 65536 - tmp;
+  64   1              T0RH = (u8)(tmp>>8);
+  65   1              T0RL = (u8)tmp;
+  66   1              TMOD &= 0xF0;
+  67   1              TMOD |= 0x01;
+  68   1              TH0 = T0RH;
+  69   1              TL0 = T0RL;
+  70   1              ET0 = 1;
+  71   1              TR0 = 1;
+  72   1      }
+  73          
+  74          void InterruptTimer0() interrupt 1
+  75          {
+  76   1              static u8 tmr200ms = 0; 
+  77   1      
+  78   1              TH0 = T0RH;
+  79   1              TL0 = T0RL;
+  80   1              tmr200ms++;
+  81   1      
+  82   1              if(tmr200ms >= 200)
+  83   1              {
+  84   2                      tmr200ms = 0;
+  85   2                      flag200ms = 1;
+  86   2              }
+  87   1              
+  88   1              KeyScan();
+  89   1              LedScan();      
+  90   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    270    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =      3       5
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

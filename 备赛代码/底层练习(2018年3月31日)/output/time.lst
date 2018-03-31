@@ -1,0 +1,75 @@
+C51 COMPILER V9.02   TIME                                                                  03/31/2018 12:10:54 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE TIME
+OBJECT MODULE PLACED IN ..\output\time.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\time.c COMPACT BROWSE DEBUG OBJECTEXTEND PRINT(..\output\time.ls
+                    -t) OBJECT(..\output\time.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "led.h"
+   3          #include "ds18b20.h"
+   4          #include "ds1302.h"
+   5          
+   6          struct sTime buffTime;
+   7          
+   8          void RefreshTime(bit sta)
+   9          {
+  10   1              if(sta)
+  11   1              {
+  12   2                      GetRealTime(&buffTime);
+  13   2              }
+  14   1              LedBuff[7] = LedChar[buffTime.hour>>4];
+  15   1              LedBuff[6] = LedChar[buffTime.hour&0x0F];
+  16   1              LedBuff[5] = 0xBF;
+  17   1              LedBuff[4] = LedChar[buffTime.min>>4];
+  18   1              LedBuff[3] = LedChar[buffTime.min&0x0F];
+  19   1              LedBuff[2] = 0xBF;
+  20   1              LedBuff[1] = LedChar[buffTime.sec>>4];
+  21   1              LedBuff[0] = LedChar[buffTime.sec&0x0F];
+  22   1      }
+  23          
+  24          void RefreshTemp()
+  25          {
+  26   1              int temp, tempBuff;
+  27   1      
+  28   1              Get18B20Temp(&temp);
+  29   1              Start18B20();
+  30   1              temp >>= 4;
+  31   1      
+  32   1              if((temp>0) && (temp<99))
+  33   1              {
+  34   2                      tempBuff = temp;
+  35   2              }
+  36   1      
+  37   1              LedBuff[1] = LedChar[tempBuff/10];
+  38   1              LedBuff[0] = LedChar[tempBuff%10];
+  39   1      }
+  40          
+  41          void KeyAction(u8 keycode)
+  42          {
+  43   1              static u8 add = 0;
+  44   1      
+  45   1              if(keycode == '0')
+  46   1              {
+  47   2                      ShowNumber(++add);      
+  48   2              }
+  49   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    218    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.02   TIME                                                                  03/31/2018 12:10:54 PAGE 2   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =      9       4
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

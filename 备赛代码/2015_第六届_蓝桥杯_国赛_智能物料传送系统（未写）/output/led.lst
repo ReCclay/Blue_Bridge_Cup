@@ -1,0 +1,81 @@
+C51 COMPILER V9.02   LED                                                                   03/31/2018 10:37:24 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN ..\output\led.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\led.c COMPACT BROWSE DEBUG OBJECTEXTEND PRINT(..\output\led.lst)
+                    - OBJECT(..\output\led.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          
+   3          u8 LedChar[] = {
+   4                  0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90
+   5          };
+   6          u8 LedBuff[] = {
+   7                  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+   8          };
+   9          
+  10          void LedScan()
+  11          {
+  12   1              static u8 index = 0;
+  13   1      
+  14   1              P2 = (P2&0x1F) | 0xE0;
+  15   1              P0 = 0xFF; 
+  16   1              P2 = P2&0x1F; 
+  17   1      
+  18   1              P2 = (P2&0x1F) | 0xC0;
+  19   1              P0 = 0x80>>index; 
+  20   1              P2 = P2&0x1F; 
+  21   1      
+  22   1              P2 = (P2&0x1F) | 0xE0;
+  23   1              P0 = LedBuff[index]; 
+  24   1              P2 = P2&0x1F; 
+  25   1      
+  26   1              index++;
+  27   1              index &= 0x07;
+  28   1      }
+  29          
+  30          void ShowNumber(u8 num)
+  31          {
+  32   1              u8 buf[8];
+  33   1              char i;
+  34   1      
+  35   1              for(i=0; i<8; i++)
+  36   1              {
+  37   2                      buf[i] = num%10;
+  38   2                      num /= 10;
+  39   2              }
+  40   1              for(i=7; i>0; i--)
+  41   1              {
+  42   2                      if(buf[i] == 0)
+  43   2                      {
+  44   3                              LedBuff[i] = 0xFF;
+  45   3                      }
+  46   2                      else
+  47   2                      {
+  48   3                              break;
+  49   3                      }
+  50   2              }
+  51   1              for( ; i>=0; i--)
+  52   1              {
+  53   2                      LedBuff[i] = LedChar[buf[i]];
+  54   2              }
+C51 COMPILER V9.02   LED                                                                   03/31/2018 10:37:24 PAGE 2   
+
+  55   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    141    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =     19       8
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

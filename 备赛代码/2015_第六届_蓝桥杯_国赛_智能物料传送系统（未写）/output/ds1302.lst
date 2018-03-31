@@ -1,0 +1,134 @@
+C51 COMPILER V9.02   DS1302                                                                03/31/2018 10:37:23 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE DS1302
+OBJECT MODULE PLACED IN ..\output\ds1302.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\ds1302.c COMPACT BROWSE DEBUG OBJECTEXTEND PRINT(..\output\ds130
+                    -2.lst) OBJECT(..\output\ds1302.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "ds1302.h"
+   3          
+   4          void DS1302ByteWrite(u8 dat)
+   5          {
+   6   1              u8 mask;
+   7   1              
+   8   1              for(mask=0x01; mask!=0; mask<<=1)
+   9   1              {
+  10   2                      if(dat&mask)
+  11   2                      {
+  12   3                              DS1302_IO = 1;
+  13   3                      }
+  14   2                      else
+  15   2                      {
+  16   3                              DS1302_IO = 0;
+  17   3                      }
+  18   2                      DS1302_CK = 1;
+  19   2                      DS1302_CK = 0;
+  20   2              }       
+  21   1              DS1302_IO = 1;
+  22   1      }
+  23          
+  24          u8 DS1302ByteRead()
+  25          {
+  26   1              u8 mask, dat=0;
+  27   1      
+  28   1              for(mask=0x01; mask!=0; mask<<=1)
+  29   1              {
+  30   2                      if(DS1302_IO)
+  31   2                      {
+  32   3                              dat |= mask;
+  33   3                      }
+  34   2                      DS1302_CK = 1;
+  35   2                      DS1302_CK = 0;
+  36   2              }
+  37   1      
+  38   1              return dat;
+  39   1      }
+  40          
+  41          void DS1302BurstWrite(u8 *dat)
+  42          {
+  43   1              u8 i;
+  44   1      
+  45   1              DS1302_CE = 1;
+  46   1              DS1302ByteWrite(0xBE);
+  47   1              for(i=0; i<8; i++)
+  48   1              {
+  49   2                      DS1302ByteWrite(*dat++);
+  50   2              }
+  51   1              DS1302_CE = 0;
+  52   1      }
+  53          
+  54          void DS1302BurstRead(u8 *dat)
+C51 COMPILER V9.02   DS1302                                                                03/31/2018 10:37:23 PAGE 2   
+
+  55          {
+  56   1              u8 i;
+  57   1      
+  58   1              DS1302_CE = 1;
+  59   1              DS1302ByteWrite(0xBF);
+  60   1              for(i=0; i<8; i++)
+  61   1              {
+  62   2                      dat[i] = DS1302ByteRead();
+  63   2              }
+  64   1              DS1302_CE = 0;
+  65   1              DS1302_IO = 0;//±ØÐë¼Ó£¡
+  66   1      }
+  67          
+  68          void SetRealTime(struct sTime *time)
+  69          {
+  70   1              u8 buf[8];
+  71   1      
+  72   1              buf[7] = 0;
+  73   1              buf[6] = time->year;
+  74   1              buf[4] = time->month;
+  75   1              buf[3] = time->day;
+  76   1              buf[2] = time->hour;
+  77   1              buf[1] = time->min;
+  78   1              buf[0] = time->sec;
+  79   1              buf[5] = time->week;
+  80   1              DS1302BurstWrite(buf);
+  81   1      }
+  82          
+  83          void GetRealTime(struct sTime *time)
+  84          {
+  85   1              u8 buf[8];
+  86   1              
+  87   1              DS1302BurstRead(buf);
+  88   1              time->year  = buf[6];
+  89   1              time->month = buf[4];
+  90   1              time->day   = buf[3];
+  91   1              time->hour  = buf[2];
+  92   1              time->min   = buf[1];
+  93   1              time->sec   = buf[0];
+  94   1              time->week  = buf[5];
+  95   1      }
+  96          
+  97          void InitDS1302()
+  98          {
+  99   1              struct sTime InitTime = {
+ 100   1                      0x18, 0x03, 0x30, 0x11, 0x44, 0x00, 0x05
+ 101   1              };
+ 102   1      
+ 103   1              DS1302_CE = 0;
+ 104   1              DS1302_CK = 0;
+ 105   1              SetRealTime(&InitTime);
+ 106   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    361    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----      33
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.02   DS1302                                                                03/31/2018 10:37:23 PAGE 3   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

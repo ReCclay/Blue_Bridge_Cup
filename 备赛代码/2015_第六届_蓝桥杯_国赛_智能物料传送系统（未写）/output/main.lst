@@ -1,0 +1,100 @@
+C51 COMPILER V9.02   MAIN                                                                  03/31/2018 10:37:24 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\output\main.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\main.c COMPACT BROWSE DEBUG OBJECTEXTEND PRINT(..\output\main.ls
+                    -t) OBJECT(..\output\main.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "led.h"
+   3          #include "keyboard.h"
+   4          #include "time.h"
+   5          #include "ds1302.h"
+   6          #include "ds18b20.h"
+   7          
+   8          bit flag200ms = 0;
+   9          u8 T0RH, T0RL;
+  10          
+  11          void CloseFucker();
+  12          void ConfigTimer0(u16 ms);
+  13          
+  14          void main()
+  15          {
+  16   1              EA = 1;
+  17   1              CloseFucker();
+  18   1              ConfigTimer0(1);
+  19   1              InitDS1302();
+  20   1              Start18B20();
+  21   1      
+  22   1              while(1)
+  23   1              {
+  24   2                      KeyDriver();
+  25   2                      if(flag200ms)
+  26   2                      {
+  27   3                              flag200ms = 0;
+  28   3      //                      RefreshTemp();
+  29   3                      }       
+  30   2              }       
+  31   1      }
+  32          
+  33          void CloseFucker()
+  34          {
+  35   1              P2 = (P2&0x1F) | 0xA0;
+  36   1              P0 &= 0xAF;
+  37   1              P2 = P2&0x1F;
+  38   1      }       
+  39          
+  40          void ConfigTimer0(u16 ms)
+  41          {
+  42   1              u32 tmp;
+  43   1      
+  44   1              tmp = 11059200/12;
+  45   1              tmp = (tmp*ms)/1000;
+  46   1              tmp = 65536 - tmp;
+  47   1              T0RH = (u8)(tmp>>8);
+  48   1              T0RL = (u8)tmp;
+  49   1              TMOD &= 0xF0;
+  50   1              TMOD |= 0x01;
+  51   1              TH0 = T0RH;
+  52   1              TL0 = T0RL;
+  53   1              ET0 = 1;
+  54   1              TR0 = 1;
+C51 COMPILER V9.02   MAIN                                                                  03/31/2018 10:37:24 PAGE 2   
+
+  55   1      }
+  56          
+  57          void InterruptTimer0() interrupt 1
+  58          {
+  59   1              static u16 tmr200ms = 0;
+  60   1      
+  61   1              TH0 = T0RH;
+  62   1              TL0 = T0RL;
+  63   1      
+  64   1              tmr200ms++;
+  65   1      
+  66   1              if(tmr200ms >= 200)
+  67   1              {
+  68   2                      tmr200ms = 0;
+  69   2                      flag200ms = 1;
+  70   2              }
+  71   1      
+  72   1              LedScan();
+  73   1              KeyScan();
+  74   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    277    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =      4       4
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,8 @@
+"..\output\ds18b20.obj",
+"..\output\ds1302.obj",
+"..\output\keyboard.obj",
+"..\output\led.obj",
+"..\output\main.obj",
+"..\output\time.obj" 
+TO "..\output\test" 
+PRINT("..\output\test.m51") RAMSIZE(256) 

@@ -1,0 +1,129 @@
+C51 COMPILER V9.02   DS18B20                                                               05/21/2018 21:49:56 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN .\Objects\ds18b20.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\ds18b20.c COMPACT OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PR
+                    -INT(.\Listings\ds18b20.lst) OBJECT(.\Objects\ds18b20.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          
+   3          void Delay(u8 us)
+   4          {
+   5   1              do{
+   6   2                      _nop_();
+   7   2                      _nop_();
+   8   2                      _nop_();
+   9   2                      _nop_();
+  10   2                      _nop_();
+  11   2                      _nop_();
+  12   2                      _nop_();
+  13   2                      _nop_();
+  14   2              }while(--us);
+  15   1      }
+  16          
+  17          bit Get18B20Ack()
+  18          {
+  19   1              bit ack;
+  20   1              
+  21   1              DS18B20_IO = 0;
+  22   1              Delay(250);
+  23   1              Delay(250);
+  24   1              DS18B20_IO = 1;
+  25   1              Delay(60);
+  26   1              ack = DS18B20_IO;
+  27   1              while(!DS18B20_IO);
+  28   1              
+  29   1              return ack;     
+  30   1      }
+  31          
+  32          void DS18B20Write(u8 dat)
+  33          {
+  34   1              u8 mask;
+  35   1      
+  36   1              for(mask=0x01; mask!=0; mask<<=1)
+  37   1              {
+  38   2                      DS18B20_IO = 0;
+  39   2                      Delay(2);
+  40   2                      if(dat&mask)
+  41   2                      {
+  42   3                              DS18B20_IO = 1;
+  43   3                      }
+  44   2                      else
+  45   2                      {
+  46   3                              DS18B20_IO = 0;
+  47   3                      }
+  48   2                      Delay(60);
+  49   2                      DS18B20_IO = 1;
+  50   2              }
+  51   1      }
+  52          
+  53          u8 DS18B20Read()
+  54          {
+C51 COMPILER V9.02   DS18B20                                                               05/21/2018 21:49:56 PAGE 2   
+
+  55   1              u8 mask, dat=0;
+  56   1              
+  57   1              for(mask=0x01; mask!=0; mask<<=1)
+  58   1              {
+  59   2                      DS18B20_IO = 0;
+  60   2                      Delay(2);
+  61   2                      DS18B20_IO = 1;
+  62   2                      Delay(2);
+  63   2                      if(DS18B20_IO)
+  64   2                      {
+  65   3                              dat |= mask;
+  66   3                      }
+  67   2                      Delay(60);
+  68   2              }
+  69   1              
+  70   1              return dat;     
+  71   1      }
+  72          
+  73          bit Start18B20()
+  74          {
+  75   1              bit ack;
+  76   1      
+  77   1              ack = Get18B20Ack();
+  78   1              if(ack == 0)
+  79   1              {
+  80   2                      DS18B20Write(0xCC);
+  81   2                      DS18B20Write(0x44);     
+  82   2              }
+  83   1      
+  84   1              return ~ack;
+  85   1      }
+  86          
+  87          bit Get18B20Temp(int *temp)
+  88          {
+  89   1              bit ack;
+  90   1              u8 LSB, MSB;
+  91   1      
+  92   1              ack = Get18B20Ack();
+  93   1              if(ack == 0)
+  94   1              {
+  95   2                      DS18B20Write(0xCC);
+  96   2                      DS18B20Write(0xBE);
+  97   2                      LSB = DS18B20Read();
+  98   2                      MSB = DS18B20Read();
+  99   2                      *temp = ((u16)MSB<<8) + LSB;
+ 100   2              }
+ 101   1      
+ 102   1              return ~ack;
+ 103   1      } 
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    185    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

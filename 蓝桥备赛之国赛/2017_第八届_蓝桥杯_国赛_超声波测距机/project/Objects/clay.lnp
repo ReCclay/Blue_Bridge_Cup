@@ -1,0 +1,11 @@
+".\Objects\main.obj",
+".\Objects\ds18b20.obj",
+".\Objects\ds1302.obj",
+".\Objects\keyboard.obj",
+".\Objects\led.obj",
+".\Objects\time.obj",
+".\Objects\eeprom.obj",
+".\Objects\i2c.obj",
+".\Objects\pcf8591.obj" 
+TO ".\Objects\clay" 
+PRINT(".\Listings\clay.m51") RAMSIZE(256) 

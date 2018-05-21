@@ -1,0 +1,104 @@
+C51 COMPILER V9.02   KEYBOARD                                                              05/21/2018 21:49:56 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE KEYBOARD
+OBJECT MODULE PLACED IN .\Objects\keyboard.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\keyboard.c COMPACT OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND P
+                    -RINT(.\Listings\keyboard.lst) OBJECT(.\Objects\keyboard.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "time.h"
+   3          
+   4          u8 KeySta[4][4] = {
+   5                  {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}
+   6          };
+   7          
+   8          u8 code KeyCodeMap[4][4] = {
+   9                  {'1', '2', '3', 0x19},
+  10                  {'4', '5', '6', 0x18},
+  11                  {'7', '8', '9', 0x17},
+  12                  {'0', 0x1B,0x0D,0x16}
+  13          };      
+  14          
+  15          
+  16          void KeyDriver()
+  17          {
+  18   1              u8 i, j;
+  19   1              static u8 backup[4][4] = {
+  20   1                      {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}
+  21   1              };
+  22   1      
+  23   1              for(i=0; i<4; i++)
+  24   1              {
+  25   2                      for(j=0; j<4; j++)
+  26   2                      {
+  27   3                              if(backup[i][j] != KeySta[i][j])
+  28   3                              {
+  29   4                                      if(backup[i][j] != 0)
+  30   4                                      {
+  31   5                                              KeyAction(KeyCodeMap[i][j]);
+  32   5                                      }
+  33   4                              }
+  34   3                              backup[i][j] = KeySta[i][j];
+  35   3                      }
+  36   2              }
+  37   1      } 
+  38          
+  39          void KeyScan()
+  40          {
+  41   1              u8 i;
+  42   1              static u8 keyout = 0;
+  43   1              static u8 keybuff[4][4] = {
+  44   1                      {0xFF, 0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF, 0xFF},
+  45   1                      {0xFF, 0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF, 0xFF}
+  46   1              };
+  47   1      
+  48   1              switch(keyout)
+  49   1              {
+  50   2                      case 0: KEY_OUT_1 = 0; KEY_OUT_4 = 1; break;
+  51   2                      case 1: KEY_OUT_2 = 0; KEY_OUT_1 = 1; break;
+  52   2                      case 2: KEY_OUT_3 = 0; KEY_OUT_2 = 1; break;
+  53   2                      case 3: KEY_OUT_4 = 0; KEY_OUT_3 = 1; break;
+  54   2                      default: break;
+C51 COMPILER V9.02   KEYBOARD                                                              05/21/2018 21:49:56 PAGE 2   
+
+  55   2              }
+  56   1      
+  57   1              keybuff[keyout][0] = (keybuff[keyout][0] << 1) | KEY_IN_1;
+  58   1              keybuff[keyout][1] = (keybuff[keyout][1] << 1) | KEY_IN_2;
+  59   1              keybuff[keyout][2] = (keybuff[keyout][2] << 1) | KEY_IN_3;
+  60   1              keybuff[keyout][3] = (keybuff[keyout][3] << 1) | KEY_IN_4;
+  61   1      
+  62   1              for(i=0; i<4; i++)
+  63   1              {
+  64   2                      if((keybuff[keyout][i]&0x0F) == 0x0F)
+  65   2                      {
+  66   3                              KeySta[keyout][i] = 1;
+  67   3                      }
+  68   2                      else if((keybuff[keyout][i]&0x0F) == 0x00)
+  69   2                      {
+  70   3                              KeySta[keyout][i] = 0;
+  71   3                      }
+  72   2                      else
+  73   2                      {}
+  74   2              }
+  75   1      
+  76   1              keyout++;
+  77   1              keyout &= 0x03;
+  78   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    356    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =     49       2
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

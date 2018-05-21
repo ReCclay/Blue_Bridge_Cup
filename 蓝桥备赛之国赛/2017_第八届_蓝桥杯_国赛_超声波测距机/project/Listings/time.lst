@@ -1,0 +1,213 @@
+C51 COMPILER V9.02   TIME                                                                  05/21/2018 21:49:57 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE TIME
+OBJECT MODULE PLACED IN .\Objects\time.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\time.c COMPACT OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT
+                    -(.\Listings\time.lst) OBJECT(.\Objects\time.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "led.h"
+   3          #include "ds18b20.h"
+   4          #include "ds1302.h"
+   5          #include "main.h"
+   6          #include "eeprom.h"
+   7          
+   8          struct sTime buffTime;
+   9          
+  10          u8 ViewIndex = 0;
+  11          u8 SaveDataCnt = 0;
+  12          
+  13          void RefreshTime(bit sta)
+  14          {
+  15   1              if(sta)
+  16   1              {
+  17   2                      GetRealTime(&buffTime);
+  18   2              }
+  19   1              LedBuff[7] = LedChar[buffTime.hour>>4];
+  20   1              LedBuff[6] = LedChar[buffTime.hour&0x0F];
+  21   1              LedBuff[5] = 0xBF;
+  22   1              LedBuff[4] = LedChar[buffTime.min>>4];
+  23   1              LedBuff[3] = LedChar[buffTime.min&0x0F];
+  24   1              LedBuff[2] = 0xBF;
+  25   1              LedBuff[1] = LedChar[buffTime.sec>>4];
+  26   1              LedBuff[0] = LedChar[buffTime.sec&0x0F];
+  27   1      }
+  28          
+  29          void RefreshTemp()
+  30          {
+  31   1              int temp, tempBuff;
+  32   1      
+  33   1              Get18B20Temp(&temp);
+  34   1              Start18B20();
+  35   1              temp >>= 4;
+  36   1      
+  37   1              if((temp>0) && (temp<99))
+  38   1              {
+  39   2                      tempBuff = temp;
+  40   2              }
+  41   1      
+  42   1              LedBuff[1] = LedChar[tempBuff/10];
+  43   1              LedBuff[0] = LedChar[tempBuff%10];
+  44   1      }
+  45          
+  46          void CloseLed()
+  47          {
+  48   1              LedBuff[0] = 0xFF;
+  49   1              LedBuff[1] = 0xFF;
+  50   1              LedBuff[2] = 0xFF;
+  51   1              LedBuff[3] = 0xFF;
+  52   1              LedBuff[4] = 0xFF;
+  53   1              LedBuff[5] = 0xFF;
+  54   1              LedBuff[6] = 0xFF;
+C51 COMPILER V9.02   TIME                                                                  05/21/2018 21:49:57 PAGE 2   
+
+  55   1              LedBuff[7] = 0xFF;
+  56   1      }
+  57          
+  58          void RefreshView()
+  59          {
+  60   1              u8 dat;
+  61   1              
+  62   1              LedBuff[7] = LedChar[ViewIndex/10];
+  63   1              LedBuff[6] = LedChar[ViewIndex%10];
+  64   1              
+  65   1              E2Read(&dat, ViewIndex, 1);
+  66   1              LedBuff[0] = LedChar[dat%10];
+  67   1              LedBuff[1] = LedChar[dat/10%10];
+  68   1              LedBuff[2] = LedChar[dat/100%10];
+  69   1      }
+  70          
+  71          void RefreshSet()
+  72          {
+  73   1              LedBuff[7] = 0x8E;
+  74   1              
+  75   1              LedBuff[0] = LedChar[FixDistance%10];
+  76   1              LedBuff[1] = LedChar[FixDistance/10];
+  77   1      }
+  78          
+  79          void FixData()
+  80          {
+  81   1              if(SysSta == E_RUN)
+  82   1              {
+  83   2                      SysSta = E_SET;
+  84   2                      P2 = (P2&0x1F) | 0x80;//开启LED8
+  85   2                      P0 = 0x7F;
+  86   2                      P2 = (P2&0x1F);
+  87   2                      CloseLed();
+  88   2                      RefreshSet();
+  89   2              }
+  90   1              else if(SysSta == E_SET)
+  91   1              {
+  92   2                      SysSta = E_RUN;
+  93   2                      P2 = (P2&0x1F) | 0x80;//开启LED8
+  94   2                      P0 = 0xFF;
+  95   2                      P2 = (P2&0x1F);
+  96   2              }
+  97   1      }
+  98          
+  99          void SaveData()
+ 100          {
+ 101   1              u8 dat;
+ 102   1              
+ 103   1              if(distance < 255)
+ 104   1              {
+ 105   2                      dat = distance;//傻逼了我，把赋值方向都搞错了。。。
+ 106   2              }
+ 107   1              
+ 108   1              E2Write(&dat, SaveDataCnt, 1);
+ 109   1              OpenLed1 = 1;
+ 110   1              SaveDataCnt++;
+ 111   1              
+ 112   1              if(SaveDataCnt >= 10)
+ 113   1              {
+ 114   2                      SaveDataCnt = 0;
+ 115   2              }
+ 116   1      }
+C51 COMPILER V9.02   TIME                                                                  05/21/2018 21:49:57 PAGE 3   
+
+ 117          
+ 118          void VeiwData()
+ 119          {
+ 120   1              if(SysSta == E_RUN)
+ 121   1              {
+ 122   2                      SysSta = E_VIEW;//从距离测量界面切换到存储显示界面
+ 123   2                      P2 = (P2&0x1F) | 0x80;//开启LED7
+ 124   2                      P0 = 0xBF;
+ 125   2                      P2 = (P2&0x1F);
+ 126   2                      SaveDataCnt = 0;//清空距离测量界面下存储数据计数变量
+ 127   2                      
+ 128   2                      CloseLed();
+ 129   2                      RefreshView();
+ 130   2              }
+ 131   1              else if(SysSta == E_VIEW)
+ 132   1              {
+ 133   2                      SysSta = E_RUN;
+ 134   2                      P2 = (P2&0x1F) | 0x80;//开启LED7
+ 135   2                      P0 = 0xFF;
+ 136   2                      P2 = (P2&0x1F);
+ 137   2                      ViewIndex   = 0;
+ 138   2              }
+ 139   1      }
+ 140          
+ 141          void KeyAction(u8 keycode)
+ 142          {
+ 143   1              if(keycode == '0')
+ 144   1              {
+ 145   2                      if(SysSta == E_RUN)
+ 146   2                      {
+ 147   3                              SaveData();//存储当前距离
+ 148   3                              Led1Cnt = 0;
+ 149   3                      }
+ 150   2              }
+ 151   1              else if(keycode == '7')
+ 152   1              {
+ 153   2                      VeiwData();
+ 154   2              }
+ 155   1              else if(keycode == '1')
+ 156   1              {
+ 157   2                      if(SysSta == E_VIEW)
+ 158   2                      {
+ 159   3                              ViewIndex++;
+ 160   3                              if(ViewIndex >= 10)
+ 161   3                              {
+ 162   4                                      ViewIndex = 0;
+ 163   4                              }
+ 164   3                              RefreshView();
+ 165   3                              
+ 166   3                      }
+ 167   2                      if(SysSta == E_SET)
+ 168   2                      {       
+ 169   3                              FixDistance += 10;
+ 170   3                              
+ 171   3                              if(FixDistance >= 100)
+ 172   3                              {
+ 173   4                                      FixDistance = 0;
+ 174   4                              }
+ 175   3                              
+ 176   3                              RefreshSet();
+ 177   3                      }
+ 178   2              }
+C51 COMPILER V9.02   TIME                                                                  05/21/2018 21:49:57 PAGE 4   
+
+ 179   1              else if(keycode == '4')
+ 180   1              {
+ 181   2                      FixData();
+ 182   2              }
+ 183   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    643    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =     10       7
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,64 @@
+C51 COMPILER V9.02   PCF8591                                                               05/21/2018 21:49:58 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE PCF8591
+OBJECT MODULE PLACED IN .\Objects\pcf8591.obj
+COMPILER INVOKED BY: F:\KEIL4\C51\BIN\C51.EXE ..\source\pcf8591.c COMPACT OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PR
+                    -INT(.\Listings\pcf8591.lst) OBJECT(.\Objects\pcf8591.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "i2c.h"
+   3          
+   4          #define VCC 50
+   5          
+   6          u8 GetADCVal(u8 ch)
+   7          {
+   8   1              u8 val;
+   9   1      
+  10   1              I2CStart();
+  11   1              if(!I2CWrite((0x48<<1)))
+  12   1              {
+  13   2                      I2CStop();
+  14   2                      return 0;
+  15   2              }
+  16   1              I2CWrite(0x40 | ch);
+  17   1              I2CStart();
+  18   1              I2CWrite((0x48<<1) | 0x01);
+  19   1              I2CReadACK();
+  20   1              val = I2CReadNAK();
+  21   1              I2CStop();
+  22   1      
+  23   1              val = (val*VCC)/255;
+  24   1              return val;
+  25   1      }
+  26          
+  27          void SetDACOut(u8 val)
+  28          {
+  29   1              val = (val*255)/VCC;
+  30   1      
+  31   1              I2CStart();
+  32   1              if(!I2CWrite((0x48<<1)))
+  33   1              {
+  34   2                      I2CStop();
+  35   2                      return;
+  36   2              }
+  37   1              I2CWrite(0x40);
+  38   1              I2CWrite(val);
+  39   1              I2CStop();      
+  40   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    123    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----       3
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
